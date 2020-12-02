@@ -1,0 +1,1 @@
+export 'weather.model.dart';

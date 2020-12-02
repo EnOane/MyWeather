@@ -1,0 +1,64 @@
+import 'package:education/logic/geolocation/geolocation_bloc.dart';
+import 'package:education/logic/weather/weather_bloc.dart';
+import 'package:education/presentation/widgets/home/weather.widget.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        toolbarHeight: 80.0,
+        elevation: 3.0,
+        title: Text(
+          'MyWeather',
+          style: Theme.of(context)
+              .textTheme
+              .headline5
+              .copyWith(fontWeight: FontWeight.bold),
+        ),
+        actions: <Widget>[
+          IconButton(
+            tooltip: 'Update location',
+            icon: Icon(Icons.location_on),
+            color: Colors.white,
+            onPressed: () {
+              BlocProvider.of<GeolocationBloc>(context)
+                  .add(GeolocationRequested());
+            },
+          ),
+          IconButton(
+            tooltip: 'Refresh',
+            icon: Icon(Icons.refresh),
+            color: Colors.white,
+            onPressed: () {
+              var currentPosition =
+                  BlocProvider.of<GeolocationBloc>(context).currentPosition;
+
+              if (currentPosition == null) {
+                BlocProvider.of<GeolocationBloc>(context)
+                    .add(GeolocationRequested());
+              } else {
+                BlocProvider.of<WeatherBloc>(context).add(
+                  WeatherRequested(
+                    lat: currentPosition.latitude,
+                    lng: currentPosition.longitude,
+                  ),
+                );
+              }
+            },
+          ),
+          IconButton(
+            tooltip: 'Settings',
+            icon: Icon(Icons.settings),
+            color: Colors.white,
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: WeatherView(),
+    );
+  }
+}
