@@ -1,3 +1,4 @@
+import 'package:education/internal/constants.dart';
 import 'package:education/logic/geolocation/geolocation_bloc.dart';
 import 'package:education/logic/weather/weather_bloc.dart';
 import 'package:education/presentation/widgets/home/weather.widget.dart';
@@ -12,12 +13,27 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         toolbarHeight: 80.0,
         elevation: 3.0,
-        title: Text(
-          'MyWeather',
-          style: Theme.of(context)
-              .textTheme
-              .headline5
-              .copyWith(fontWeight: FontWeight.bold),
+        title: Row(
+          children: [
+            Container(
+              child: Image(
+                color: Colors.white,
+                image: Image.asset('assets/icons/icon.png').image,
+                width: 50.0,
+                height: 50.0,
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.only(left: kDefaultPadding * 2),
+              child: Text(
+                'MyWeather',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline5
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
         ),
         actions: <Widget>[
           IconButton(
