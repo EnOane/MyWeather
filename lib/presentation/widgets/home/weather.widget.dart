@@ -148,6 +148,7 @@ class _WeatherViewState extends State<WeatherView> {
 
                   if (state is WeatherLoadFailure) {
                     final snackBar = SnackBar(
+                      duration: Duration(seconds: 5),
                       content: Text(
                         'Something went wrong!',
                       ),
