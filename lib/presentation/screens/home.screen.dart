@@ -35,43 +35,59 @@ class HomeScreen extends StatelessWidget {
             ),
           ],
         ),
-        actions: <Widget>[
-          IconButton(
-            tooltip: 'Update location',
-            icon: Icon(Icons.location_on),
-            color: Colors.white,
-            onPressed: () {
-              BlocProvider.of<GeolocationBloc>(context)
-                  .add(GeolocationRequested());
-            },
-          ),
-          IconButton(
-            tooltip: 'Refresh',
-            icon: Icon(Icons.refresh),
-            color: Colors.white,
-            onPressed: () {
-              var currentPosition =
-                  BlocProvider.of<GeolocationBloc>(context).currentPosition;
-
-              if (currentPosition == null) {
-                BlocProvider.of<GeolocationBloc>(context)
-                    .add(GeolocationRequested());
-              } else {
-                BlocProvider.of<WeatherBloc>(context).add(
-                  WeatherRequested(
-                    lat: currentPosition.latitude,
-                    lng: currentPosition.longitude,
+        actions: [
+          Container(
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(right: kDefaultPadding * 1.5),
+                  child: IconButton(
+                    tooltip: 'Update location',
+                    icon: Icon(Icons.location_on),
+                    color: Colors.white,
+                    onPressed: () {
+                      BlocProvider.of<GeolocationBloc>(context)
+                          .add(GeolocationRequested());
+                    },
                   ),
-                );
-              }
-            },
-          ),
-          IconButton(
-            tooltip: 'Settings',
-            icon: Icon(Icons.settings),
-            color: Colors.white,
-            onPressed: () {},
-          ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: kDefaultPadding * 1.5),
+                  child: IconButton(
+                    tooltip: 'Refresh',
+                    icon: Icon(Icons.refresh),
+                    color: Colors.white,
+                    onPressed: () {
+                      var currentPosition =
+                          BlocProvider.of<GeolocationBloc>(context)
+                              .currentPosition;
+
+                      if (currentPosition == null) {
+                        BlocProvider.of<GeolocationBloc>(context)
+                            .add(GeolocationRequested());
+                      } else {
+                        BlocProvider.of<WeatherBloc>(context).add(
+                          WeatherRequested(
+                            lat: currentPosition.latitude,
+                            lng: currentPosition.longitude,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: kDefaultPadding * 1.5),
+                  child: IconButton(
+                    tooltip: 'Settings',
+                    icon: Icon(Icons.settings),
+                    color: Colors.white,
+                    onPressed: () {},
+                  ),
+                ),
+              ],
+            ),
+          )
         ],
       ),
       body: WeatherView(),
