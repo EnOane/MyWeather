@@ -42,18 +42,6 @@ class HomeScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: kDefaultPadding * 1.5),
                   child: IconButton(
-                    tooltip: 'Update location',
-                    icon: Icon(Icons.location_on),
-                    color: Colors.white,
-                    onPressed: () {
-                      BlocProvider.of<GeolocationBloc>(context)
-                          .add(GeolocationRequested());
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: kDefaultPadding * 1.5),
-                  child: IconButton(
                     tooltip: 'Refresh',
                     icon: Icon(Icons.refresh),
                     color: Colors.white,
