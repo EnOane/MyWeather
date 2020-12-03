@@ -4,6 +4,7 @@ import 'package:education/logic/weather/weather_bloc.dart';
 import 'package:education/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 
 class WeatherView extends StatefulWidget {
@@ -22,149 +23,184 @@ class _WeatherViewState extends State<WeatherView> {
     super.initState();
   }
 
+  Position _position;
+
+  Future<void> _onRefresh() async {
+    BlocProvider.of<WeatherBloc>(context).add(
+      WeatherRequested(
+        lat: _position.latitude,
+        lng: _position.longitude,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: double.infinity,
-      decoration: BoxDecoration(
-        gradient: new LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.blueGrey,
-            Colors.grey[350],
-          ],
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      backgroundColor: Theme.of(context).primaryColor,
+      child: Container(
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.blueGrey,
+              Colors.grey[350],
+            ],
+          ),
         ),
-      ),
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(kDefaultPadding),
-          child: Column(
-            children: [
-              BlocBuilder<GeolocationBloc, GeolocationState>(
-                builder: (context, state) {
-                  if (state is GeolocationInitial ||
-                      state is GeolocationLoadInProgress) {
-                    return Container(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(kDefaultPadding),
+            child: Column(
+              children: [
+                BlocBuilder<GeolocationBloc, GeolocationState>(
+                  builder: (context, state) {
+                    if (state is GeolocationLoadSuccess) {
+                      _position = state.position;
 
-                  if (state is GeolocationLoadSuccess) {
-                    final position = state.position;
+                      BlocProvider.of<WeatherBloc>(context).add(
+                        WeatherRequested(
+                          lat: _position.latitude,
+                          lng: _position.longitude,
+                        ),
+                      );
+                    }
 
-                    BlocProvider.of<WeatherBloc>(context).add(
-                      WeatherRequested(
-                        lat: position.latitude,
-                        lng: position.longitude,
-                      ),
-                    );
-                  }
+                    if (state is GeolocationLoadFailure) {
+                      final snackBar = SnackBar(
+                        duration: Duration(seconds: 5),
+                        content: Text(
+                          'Something went wrong!',
+                        ),
+                        action: SnackBarAction(
+                          label: "CANCEL",
+                          onPressed: () => {},
+                        ),
+                      );
 
-                  return Container();
-                },
-              ),
-              BlocBuilder<WeatherBloc, WeatherState>(
-                builder: (context, state) {
-                  if (state is WeatherLoadInProgress) {
-                    return Container(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-                  if (state is WeatherLoadSuccess) {
-                    final weather = state.weather;
+                      return Center(
+                        child: Container(
+                          child: Text(state.error.toString()),
+                        ),
+                      );
+                    }
 
-                    return Padding(
-                      padding: const EdgeInsets.only(top: kDefaultPadding * 4),
-                      child: ResponsiveGridRow(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          ResponsiveGridCol(
-                            lg: 12,
-                            child: ResponsiveGridRow(
-                              children: [
-                                ResponsiveGridCol(
-                                  lg: 12,
-                                  xs: 12,
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    child: Location(
-                                      weather: weather,
+                    return Container();
+                  },
+                ),
+                BlocBuilder<WeatherBloc, WeatherState>(
+                  builder: (context, state) {
+                    if (state is WeatherLoadInProgress) {
+                      return Container(
+                        height: MediaQuery.of(context).size.height - 100,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+
+                    if (state is WeatherLoadSuccess) {
+                      final weather = state.weather;
+
+                      return Padding(
+                        padding:
+                            const EdgeInsets.only(top: kDefaultPadding * 4),
+                        child: ResponsiveGridRow(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            ResponsiveGridCol(
+                              lg: 12,
+                              child: ResponsiveGridRow(
+                                children: [
+                                  ResponsiveGridCol(
+                                    lg: 12,
+                                    xs: 12,
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      child: WeatherMainInfo(
+                                        weather: weather,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          ResponsiveGridCol(
-                            lg: 12,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  top: kDefaultPadding * 6),
-                              child: WeatherViewInfo(weather: weather),
+                            ResponsiveGridCol(
+                              lg: 12,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: kDefaultPadding * 6),
+                                child: WeatherViewInfo(weather: weather),
+                              ),
                             ),
-                          ),
-                          ResponsiveGridCol(
-                            child: ResponsiveGridRow(
-                              children: [
-                                ResponsiveGridCol(
-                                  sm: 1,
-                                  md: 2,
-                                  lg: 3,
-                                  xl: 4,
-                                  child: Container(),
-                                ),
-                                ResponsiveGridCol(
-                                  xs: 12,
-                                  sm: 10,
-                                  md: 8,
-                                  lg: 6,
-                                  xl: 4,
-                                  child: Container(
-                                    padding: const EdgeInsets.only(
-                                        top: kDefaultPadding * 8),
-                                    child: CardBuilder(weather: weather),
+                            ResponsiveGridCol(
+                              child: ResponsiveGridRow(
+                                children: [
+                                  ResponsiveGridCol(
+                                    sm: 1,
+                                    md: 2,
+                                    lg: 3,
+                                    xl: 4,
+                                    child: Container(),
                                   ),
-                                ),
-                                ResponsiveGridCol(
-                                  sm: 1,
-                                  md: 2,
-                                  lg: 3,
-                                  xl: 4,
-                                  child: Container(),
-                                ),
-                              ],
+                                  ResponsiveGridCol(
+                                    xs: 12,
+                                    sm: 10,
+                                    md: 8,
+                                    lg: 6,
+                                    xl: 4,
+                                    child: Container(
+                                      padding: const EdgeInsets.only(
+                                          top: kDefaultPadding * 8),
+                                      child: WeatherMoreInfo(weather: weather),
+                                    ),
+                                  ),
+                                  ResponsiveGridCol(
+                                    sm: 1,
+                                    md: 2,
+                                    lg: 3,
+                                    xl: 4,
+                                    child: Container(),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
+                          ],
+                        ),
+                      );
+                    }
 
-                  if (state is WeatherLoadFailure) {
-                    final snackBar = SnackBar(
-                      duration: Duration(seconds: 5),
-                      content: Text(
-                        'Something went wrong!',
-                      ),
-                      action: SnackBarAction(
-                        label: "CANCEL",
-                        onPressed: () => {},
-                      ),
-                    );
+                    if (state is WeatherLoadFailure) {
+                      final snackBar = SnackBar(
+                        duration: Duration(seconds: 5),
+                        content: Text(
+                          'Something went wrong!',
+                        ),
+                        action: SnackBarAction(
+                          label: "CANCEL",
+                          onPressed: () => {},
+                        ),
+                      );
 
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  }
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-                  return Container();
-                },
-              ),
-            ],
+                      return Center(
+                        child: Container(
+                          child: Text(state.error.toString()),
+                        ),
+                      );
+                    }
+
+                    return Container();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -172,10 +208,10 @@ class _WeatherViewState extends State<WeatherView> {
   }
 }
 
-class Location extends StatelessWidget {
+class WeatherMainInfo extends StatelessWidget {
   final Weather weather;
 
-  Location({
+  WeatherMainInfo({
     Key key,
     @required this.weather,
   })  : assert(weather != null),
@@ -190,8 +226,8 @@ class Location extends StatelessWidget {
         Image(
           color: Colors.white,
           image: Image.network(
-                  'http://openweathermap.org/img/wn/${weather.icon}@2x.png')
-              .image,
+            'http://openweathermap.org/img/wn/${weather.icon}@2x.png',
+          ).image,
           height: 80.0,
         ),
         Container(
@@ -254,8 +290,8 @@ class WeatherViewInfo extends StatelessWidget {
   }
 }
 
-class CardBuilder extends StatelessWidget {
-  const CardBuilder({
+class WeatherMoreInfo extends StatelessWidget {
+  const WeatherMoreInfo({
     Key key,
     @required this.weather,
   }) : super(key: key);

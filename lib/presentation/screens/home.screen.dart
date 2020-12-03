@@ -2,6 +2,7 @@ import 'package:education/internal/constants.dart';
 import 'package:education/logic/geolocation/geolocation_bloc.dart';
 import 'package:education/logic/weather/weather_bloc.dart';
 import 'package:education/presentation/widgets/home/weather.widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -39,31 +40,34 @@ class HomeScreen extends StatelessWidget {
           Container(
             child: Row(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(right: kDefaultPadding * 1.5),
-                  child: IconButton(
-                    tooltip: 'Refresh',
-                    icon: Icon(Icons.refresh),
-                    color: Colors.white,
-                    onPressed: () {
-                      var currentPosition =
-                          BlocProvider.of<GeolocationBloc>(context)
-                              .currentPosition;
+                kIsWeb
+                    ? Padding(
+                        padding:
+                            const EdgeInsets.only(right: kDefaultPadding * 1.5),
+                        child: IconButton(
+                          tooltip: 'Refresh',
+                          icon: Icon(Icons.refresh),
+                          color: Colors.white,
+                          onPressed: () {
+                            var currentPosition =
+                                BlocProvider.of<GeolocationBloc>(context)
+                                    .currentPosition;
 
-                      if (currentPosition == null) {
-                        BlocProvider.of<GeolocationBloc>(context)
-                            .add(GeolocationRequested());
-                      } else {
-                        BlocProvider.of<WeatherBloc>(context).add(
-                          WeatherRequested(
-                            lat: currentPosition.latitude,
-                            lng: currentPosition.longitude,
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
+                            if (currentPosition == null) {
+                              BlocProvider.of<GeolocationBloc>(context)
+                                  .add(GeolocationRequested());
+                            } else {
+                              BlocProvider.of<WeatherBloc>(context).add(
+                                WeatherRequested(
+                                  lat: currentPosition.latitude,
+                                  lng: currentPosition.longitude,
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      )
+                    : Container(),
                 Padding(
                   padding: const EdgeInsets.only(right: kDefaultPadding * 1.5),
                   child: IconButton(
