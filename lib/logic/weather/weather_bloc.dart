@@ -29,12 +29,14 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
         );
 
         yield WeatherLoadSuccess(weather: weather);
-      } catch (_) {
-        yield WeatherLoadFailure();
+      } catch (error) {
+        yield WeatherLoadFailure(error: error);
       }
     }
 
     if (event is WeatherRefreshRequested) {
+      yield WeatherLoadInProgress();
+
       try {
         final Weather weather = await weatherRepository.getWeather(
           lat: event.lat,
@@ -42,7 +44,9 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
         );
 
         yield WeatherLoadSuccess(weather: weather);
-      } catch (_) {}
+      } catch (error) {
+        yield WeatherLoadFailure(error: error);
+      }
     }
   }
 }

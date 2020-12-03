@@ -14,10 +14,18 @@ class GeolocationLoadInProgress extends GeolocationState {}
 class GeolocationLoadSuccess extends GeolocationState {
   final Position position;
 
-  const GeolocationLoadSuccess({this.position}) : assert(position != null);
+  const GeolocationLoadSuccess({
+    this.position,
+  }) : assert(position != null);
 
   @override
   List<Object> get props => [position];
 }
 
-class GeolocationLoadFailure extends GeolocationState {}
+class GeolocationLoadFailure extends GeolocationState {
+  final Error error;
+
+  const GeolocationLoadFailure({
+    this.error,
+  });
+}

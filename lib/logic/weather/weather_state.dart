@@ -14,10 +14,18 @@ class WeatherLoadInProgress extends WeatherState {}
 class WeatherLoadSuccess extends WeatherState {
   final Weather weather;
 
-  const WeatherLoadSuccess({@required this.weather}) : assert(weather != null);
+  const WeatherLoadSuccess({
+    @required this.weather,
+  }) : assert(weather != null);
 
   @override
   List<Object> get props => [weather];
 }
 
-class WeatherLoadFailure extends WeatherState {}
+class WeatherLoadFailure extends WeatherState {
+  final Error error;
+
+  const WeatherLoadFailure({
+    this.error,
+  });
+}

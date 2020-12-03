@@ -21,8 +21,11 @@ class GeolocationBloc extends Bloc<GeolocationEvent, GeolocationState> {
   @override
   Stream<GeolocationState> mapEventToState(GeolocationEvent event) async* {
     if (event is GeolocationInitial) {
-      currentPosition = await geolocationRepository.getCurrentLocation();
       yield GeolocationLoadInProgress();
+
+      currentPosition = await geolocationRepository.getCurrentLocation();
+
+      yield GeolocationLoadSuccess(position: currentPosition);
     }
 
     if (event is GeolocationRequested) {
@@ -32,8 +35,8 @@ class GeolocationBloc extends Bloc<GeolocationEvent, GeolocationState> {
         currentPosition = await geolocationRepository.getCurrentLocation();
 
         yield GeolocationLoadSuccess(position: currentPosition);
-      } catch (_) {
-        yield GeolocationLoadFailure();
+      } catch (error) {
+        yield GeolocationLoadFailure(error: error);
       }
     }
   }
