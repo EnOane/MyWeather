@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 class WeatherApiClient {
   final http.Client _httpClient = http.Client();
   final String _api = 'bc6ba183cf4db1880e293595ff60b5d8';
-  final String _baseUrl = 'http://api.openweathermap.org/data/2.5/weather';
+  final String _baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
 
   Future<Map<String, dynamic>> fetchWeather({
     @required double lat,
