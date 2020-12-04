@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "710084802107",
+    "project_id": "myweather-4a93f",
+    "storage_bucket": "myweather-4a93f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:710084802107:android:d589eebb864e46a2bb8e1e",
+        "android_client_info": {
+          "package_name": "com.example.myweather"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "710084802107-4ithqo0envhl06e89hkt861e82fthsp0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6gzVXT8_lqQDje2NFicvw3QqzpE2Lbsw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "710084802107-4ithqo0envhl06e89hkt861e82fthsp0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
