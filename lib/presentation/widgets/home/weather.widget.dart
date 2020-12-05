@@ -52,7 +52,8 @@ class _WeatherViewState extends State<WeatherView> {
           ),
         ),
         child: SingleChildScrollView(
-          child: Padding(
+          child: Container(
+            height: MediaQuery.of(context).size.height * .9,
             padding: const EdgeInsets.all(kDefaultPadding),
             child: Column(
               children: [
