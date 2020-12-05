@@ -23,15 +23,11 @@ class _WeatherViewState extends State<WeatherView> {
     super.initState();
   }
 
-  Position _position;
-
   Future<void> _onRefresh() async {
-    BlocProvider.of<WeatherBloc>(context).add(
-      WeatherRequested(
-        lat: _position.latitude,
-        lng: _position.longitude,
-      ),
-    );
+    Future.microtask(() =>
+        BlocProvider.of<GeolocationBloc>(context).add(GeolocationRequested()));
+
+    await Future.delayed(Duration(seconds: 3));
   }
 
   @override
@@ -60,7 +56,7 @@ class _WeatherViewState extends State<WeatherView> {
                 BlocBuilder<GeolocationBloc, GeolocationState>(
                   builder: (context, state) {
                     if (state is GeolocationLoadSuccess) {
-                      _position = state.position;
+                      Position _position = state.position;
 
                       BlocProvider.of<WeatherBloc>(context).add(
                         WeatherRequested(
@@ -96,15 +92,6 @@ class _WeatherViewState extends State<WeatherView> {
                 ),
                 BlocBuilder<WeatherBloc, WeatherState>(
                   builder: (context, state) {
-                    if (state is WeatherLoadInProgress) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height - 100,
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    }
-
                     if (state is WeatherLoadSuccess) {
                       final weather = state.weather;
 

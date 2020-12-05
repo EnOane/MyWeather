@@ -12,7 +12,6 @@ class GeolocationRepository {
       _position = Position(latitude: 35.0, longitude: 113.0);
     } else if (Platform.isAndroid) {
       final bool _serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      var pos = await Geolocator.getLastKnownPosition();
 
       if (_serviceEnabled) {
         LocationPermission permission = await Geolocator.checkPermission();
@@ -28,15 +27,15 @@ class GeolocationRepository {
             );
           }
         } else {
-          _position = pos == null
-              ? await Geolocator.getCurrentPosition(
-                  desiredAccuracy: LocationAccuracy.high)
-              : pos;
+          _position = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high);
         }
       } else if (_serviceEnabled == false) {
+        Position pos = await Geolocator.getLastKnownPosition();
+
         if (pos != null) {
           _position = pos;
-        } else {}
+        }
       }
     }
 
