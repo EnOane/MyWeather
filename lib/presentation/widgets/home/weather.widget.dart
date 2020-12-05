@@ -225,9 +225,7 @@ class WeatherMainInfo extends StatelessWidget {
       children: [
         Image(
           color: Colors.white,
-          image: Image.network(
-            'https://openweathermap.org/img/wn/${weather.icon}@2x.png',
-          ).image,
+          image: Image.network(weather.icon).image,
           height: 80.0,
         ),
         Container(

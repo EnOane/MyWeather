@@ -48,7 +48,8 @@ class Weather extends Equatable {
     return Weather(
       main: map['weather'][0]['main'],
       description: map['weather'][0]['description'],
-      icon: map['weather'][0]['icon'],
+      icon:
+          'https://openweathermap.org/img/wn/${map['weather'][0]['icon']}@2x.png',
       temp: map['main']['temp'],
       feelsLike: map['main']['feels_like'],
       pressure: map['main']['pressure'],
